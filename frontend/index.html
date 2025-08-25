@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JARVIS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <div class="shell">
+
+    <!-- ══════════════════════════ LEFT RAIL ══════════════════════════ -->
+    <aside class="rail" id="rail">
+
+      <div class="reactor-mount">
+        <div class="reactor" id="reactor" data-state="idle">
+          <svg viewBox="0 0 120 120" class="reactor-svg" aria-hidden="true">
+            <circle class="ring ring-outer" cx="60" cy="60" r="54" />
+            <circle class="ring ring-mid"   cx="60" cy="60" r="41" />
+            <circle class="ring ring-inner" cx="60" cy="60" r="27" />
+            <circle class="core"            cx="60" cy="60" r="15" />
+            <g class="ticks">
+              <line x1="60" y1="4"   x2="60" y2="14" />
+              <line x1="60" y1="106" x2="60" y2="116" />
+              <line x1="4"  y1="60"  x2="14" y2="60" />
+              <line x1="106" y1="60" x2="116" y2="60" />
+            </g>
+          </svg>
+        </div>
+        <p class="reactor-label" id="reactorLabel">Standing by</p>
+      </div>
+
+      <div class="link-state" id="linkState" data-ok="false">
+        <span class="link-dot"></span>
+        <span id="linkText">Connecting to core</span>
+      </div>
+
+      <nav class="panel-tabs" role="tablist">
+        <button class="panel-tab is-active" data-panel="tasks"  role="tab">Tasks</button>
+        <button class="panel-tab" data-panel="events" role="tab">Calendar</button>
+        <button class="panel-tab" data-panel="notes"  role="tab">Notes</button>
+      </nav>
+
+      <div class="panel-body">
+        <section class="panel is-active" id="panel-tasks"  role="tabpanel"></section>
+        <section class="panel" id="panel-events" role="tabpanel"></section>
+        <section class="panel" id="panel-notes"  role="tabpanel"></section>
+      </div>
+
+      <div class="readout" id="weatherReadout" hidden>
+        <div class="readout-figure" id="weatherTemp">--</div>
+        <div class="readout-detail">
+          <span id="weatherPlace">—</span>
+          <span id="weatherCond">—</span>
+        </div>
+      </div>
+
+      <div class="rail-foot">
+        <button class="ghost-btn" id="voiceToggle" aria-pressed="true">
+          Voice output on
+        </button>
+        <button class="ghost-btn" id="settingsBtn">Settings</button>
+      </div>
+    </aside>
+
+    <!-- ═══════════════════════════ MAIN ══════════════════════════════ -->
+    <main class="main">
+
+      <header class="masthead">
+        <button class="rail-toggle" id="railToggle" aria-label="Show panels">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="masthead-title">
+          <h1>J.A.R.V.I.S.</h1>
+          <p id="mastheadSub">Just A Rather Very Intelligent System</p>
+        </div>
+        <div class="masthead-meta">
+          <span id="clock">--:--</span>
+          <span id="modelTag">—</span>
+        </div>
+      </header>
+
+      <div class="stream" id="stream" aria-live="polite"></div>
+
+      <div class="typing" id="typing" hidden>
+        <span></span><span></span><span></span>
+        <em>Processing</em>
+      </div>
+
+      <div class="quick-row" id="quickRow">
+        <button data-say="What's the weather?">Weather</button>
+        <button data-say="Show my tasks">My tasks</button>
+        <button data-say="What's on my calendar?">Calendar</button>
+        <button data-say="Tell me a joke">Joke</button>
+        <button data-say="Give me a productivity tip">Focus tip</button>
+        <button data-say="Status">Diagnostics</button>
+      </div>
+
+      <form class="composer" id="composer" autocomplete="off">
+        <button type="button" class="mic-btn" id="micBtn" aria-label="Speak">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/>
+            <path d="M18 11a6 6 0 0 1-12 0M12 17v4"/>
+          </svg>
+        </button>
+        <input
+          id="input"
+          type="text"
+          placeholder="Speak or type a command"
+          aria-label="Message JARVIS" />
+        <button type="submit" class="send-btn" id="sendBtn">Send</button>
+      </form>
+    </main>
+  </div>
+
+  <!-- ═════════════════════════ SETTINGS ═══════════════════════════ -->
+  <div class="sheet-backdrop" id="sheetBackdrop" hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <h2 id="sheetTitle">Settings</h2>
+
+      <label for="apiInput">Backend address</label>
+      <input id="apiInput" type="url" placeholder="http://localhost:5000" />
+      <p class="field-hint">Change this to your Render URL after deploying.</p>
+
+      <label for="nameInput">What JARVIS calls you</label>
+      <input id="nameInput" type="text" placeholder="Sir" />
+
+      <label for="cityInput">Default city for weather</label>
+      <input id="cityInput" type="text" placeholder="Frankfurt" />
+
+      <div class="sheet-actions">
+        <button class="ghost-btn" id="clearHistoryBtn">Clear chat history</button>
+        <div class="sheet-actions-right">
+          <button class="ghost-btn" id="sheetCancel">Cancel</button>
+          <button class="send-btn" id="sheetSave">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
