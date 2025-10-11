@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: jarvis-backend
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: AI_PROVIDER
+        value: groq
+      - key: GROQ_API_KEY
+        sync: false          # set this by hand in the Render dashboard
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b
+      - key: FLASK_DEBUG
+        value: "False"
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: DATABASE_PATH
+        value: /tmp/jarvis.db
+      - key: DEFAULT_CITY
+        value: Frankfurt
